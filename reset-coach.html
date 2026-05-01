@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Reset">
+<meta name="theme-color" content="#f5f4ef">
+<title>Reset</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background: #f5f4ef; color: #1a1a1a; height: 100%; overflow-x: hidden; }
+  body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); min-height: 100vh; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px; min-height: 100vh; display: flex; flex-direction: column; }
+  .card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); flex: 1; display: flex; flex-direction: column; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .title { font-size: 22px; font-weight: 600; margin: 0; }
+  .sub { font-size: 14px; color: #6a6a6a; margin: 4px 0 0; }
+  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .big-btn { background: #f5f4ef; border: 1px solid #e4e2da; border-radius: 16px; padding: 22px 12px; font-size: 16px; font-weight: 600; cursor: pointer; text-align: center; color: #1a1a1a; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-family: inherit; transition: transform 0.08s; }
+  .big-btn:active { transform: scale(0.96); background: #ebe9e0; }
+  .big-btn .icon { width: 40px; height: 40px; }
+  .btn-full { grid-column: span 2; }
+  .btn-info { background: #e6f1fb; color: #0c447c; border-color: #b5d4f4; }
+  .option-btn { display: flex; align-items: center; gap: 14px; width: 100%; background: #f5f4ef; border: 1px solid #e4e2da; border-radius: 12px; padding: 18px; font-size: 16px; cursor: pointer; text-align: left; margin-bottom: 10px; color: #1a1a1a; font-family: inherit; font-weight: 500; }
+  .option-btn:active { transform: scale(0.98); background: #ebe9e0; }
+  .option-btn .opt-icon { width: 26px; height: 26px; flex-shrink: 0; color: #6a6a6a; }
+  .back { background: none; border: none; color: #6a6a6a; font-size: 15px; cursor: pointer; padding: 6px 10px; font-family: inherit; }
+  .timer { font-size: 72px; font-weight: 600; text-align: center; margin: 24px 0; color: #1a1a1a; }
+  .instruction { font-size: 20px; text-align: center; line-height: 1.5; margin: 16px 0; min-height: 70px; white-space: pre-line; font-weight: 500; }
+  .count { font-size: 84px; font-weight: 600; text-align: center; color: #185fa5; margin: 12px 0; }
+  .count-sub { text-align: center; font-size: 15px; color: #6a6a6a; margin-bottom: 16px; }
+  .big-tap { width: 100%; background: #e6f1fb; color: #0c447c; border: 1px solid #b5d4f4; border-radius: 12px; padding: 26px; font-size: 17px; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
+  .big-tap:active { background: #d0e3f5; }
+  .finish-btn { width: 100%; background: #c0dd97; color: #27500a; border: 1px solid #97c459; border-radius: 12px; padding: 20px; font-size: 17px; font-weight: 600; cursor: pointer; margin-top: 16px; font-family: inherit; }
+  .finish-btn:active { background: #a6ce7a; }
+  .speak-btn { background: #fff; border: 1px solid #e4e2da; border-radius: 999px; padding: 10px 18px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; color: #6a6a6a; font-family: inherit; font-weight: 500; }
+  .speak-wrap { text-align: center; margin: 12px 0; }
+  .log-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eeece4; font-size: 14px; }
+  .log-row:last-child { border: none; }
+  .log-time { color: #6a6a6a; font-size: 12px; margin-top: 2px; }
+  .hidden { display: none !important; }
+  .settings-btn { background: none; border: none; color: #a8a8a0; font-size: 12px; cursor: pointer; font-family: inherit; padding: 6px; }
+  .praise { text-align: center; padding: 2rem 1rem 1rem; }
+  .praise-emoji { font-size: 64px; margin-bottom: 10px; }
+  .praise-text { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+  .praise-sub { font-size: 16px; color: #6a6a6a; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat { background: #f5f4ef; border-radius: 12px; padding: 14px; }
+  .stat-label { font-size: 12px; color: #6a6a6a; font-weight: 500; }
+  .stat-value { font-size: 24px; font-weight: 600; margin-top: 4px; }
+  .pin-dots { display: flex; gap: 14px; justify-content: center; margin: 20px 0 28px; }
+  .pin-dot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #9a9a92; }
+  .pin-dot.filled { background: #1a1a1a; border-color: #1a1a1a; }
+  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 280px; margin: 0 auto; }
+  .pin-key { background: #f5f4ef; border: 1px solid #e4e2da; border-radius: 12px; padding: 20px; font-size: 22px; cursor: pointer; font-weight: 500; font-family: inherit; }
+  .pin-key:active { background: #ebe9e0; }
+  .section-label { font-size: 12px; color: #a8a8a0; text-transform: uppercase; letter-spacing: 0.5px; margin: 20px 0 10px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+
+    <!-- HOME (now first screen) -->
+    <div id="screen-home">
+      <div class="header">
+        <div>
+          <h1 class="title">How do you feel?</h1>
+          <p class="sub">Tap one to start.</p>
+        </div>
+        <button class="settings-btn" onclick="showScreen('pin')">parent</button>
+      </div>
+      <div class="btn-grid">
+        <button class="big-btn" onclick="choose('move')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="5" r="2"/><path d="M12 7v6l-3 7M12 13l3 7M8 10l-3 2M16 10l3 2"/></svg>
+          I need to move
+        </button>
+        <button class="big-btn" onclick="choose('frustrated')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 15c1-1 2.5-1.5 4-1.5s3 0.5 4 1.5M9 9l1 1M14 9l1 1"/></svg>
+          I'm frustrated
+        </button>
+        <button class="big-btn" onclick="choose('calm')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 1 2.5 1.5 4 1.5s3-0.5 4-1.5M8 9h1M15 9h1"/></svg>
+          Calm my body
+        </button>
+        <button class="big-btn" onclick="choose('focus')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+          Help me focus
+        </button>
+        <button class="big-btn btn-full btn-info" onclick="choose('adult')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3z"/></svg>
+          Tell Mom or Dad
+        </button>
+      </div>
+    </div>
+
+    <!-- CHOOSE -->
+    <div id="screen-choose" class="hidden">
+      <div class="header">
+        <button class="back" onclick="showScreen('home')">← back</button><span></span>
+      </div>
+      <h1 class="title" id="choose-title">Pick one</h1>
+      <div id="choose-options" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- ACTIVE -->
+    <div id="screen-active" class="hidden">
+      <div class="header">
+        <button class="back" onclick="showScreen('home')">← stop</button><span></span>
+      </div>
+      <h1 class="title" id="active-title" style="text-align:center;"></h1>
+      <div class="instruction" id="active-instruction"></div>
+      <div class="speak-wrap">
+        <button class="speak-btn" onclick="speak()">
+          <svg style="width:16px;height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+          Read to me
+        </button>
+      </div>
+      <div id="active-display"></div>
+      <button class="finish-btn" onclick="finish()">I did it ✓</button>
+    </div>
+
+    <!-- OUTCOME -->
+    <div id="screen-outcome" class="hidden">
+      <div class="praise">
+        <div class="praise-emoji">★</div>
+        <div class="praise-text">Nice job.</div>
+        <div class="praise-sub">Did that help?</div>
+      </div>
+      <div class="btn-grid">
+        <button class="big-btn" onclick="logOutcome('yes')" style="background: #c0dd97; color: #27500a; border-color: #97c459; min-height: 100px;">Yes ✓</button>
+        <button class="big-btn" onclick="logOutcome('some')" style="background: #fac775; color: #633806; border-color: #ef9f27; min-height: 100px;">A little</button>
+        <button class="big-btn btn-full" onclick="logOutcome('no')" style="min-height: 80px;">Still need help</button>
+      </div>
+    </div>
+
+    <!-- PIN -->
+    <div id="screen-pin" class="hidden">
+      <div class="header">
+        <button class="back" onclick="showScreen('home')">← back</button><span></span>
+      </div>
+      <h1 class="title" style="text-align:center;">Parent PIN</h1>
+      <p class="sub" style="text-align:center;">Default: 1234</p>
+      <div class="pin-dots" id="pin-dots">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+      <div class="pin-pad" id="pin-pad"></div>
+    </div>
+
+    <!-- PARENT -->
+    <div id="screen-parent" class="hidden">
+      <div class="header">
+        <div>
+          <h1 class="title">Parent dashboard</h1>
+          <p class="sub">Last 7 days</p>
+        </div>
+        <button class="back" onclick="showScreen('home')">done</button>
+      </div>
+      <div class="stat-grid" id="parent-stats"></div>
+      <div class="section-label">Recent log</div>
+      <div id="parent-log"></div>
+      <div class="section-label">Actions</div>
+      <button class="option-btn" onclick="exportLog()">
+        <svg class="opt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>
+        Share log with Claude
+      </button>
+      <button class="option-btn" onclick="clearLog()" style="color: #a32d2d;">
+        <svg class="opt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M6 6v14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6"/></svg>
+        Clear all logs
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  const LOG_KEY = 'reset_coach_log_v1';
+  const PIN = '1234';
+  let pinEntry = '';
+  let currentCategory = null;
+  let currentOption = null;
+  let activeTimer = null;
+  let activeCount = 0;
+
+  const interventions = {
+    move: { title: 'Pick a move', options: [
+      { label: '10 wall pushes', icon: 'dumbbell', type: 'count', target: 10, instruction: 'Push the wall hard.\nCount each one.' },
+      { label: '20 marching steps', icon: 'feet', type: 'count', target: 20, instruction: 'March in place.\nLift your knees high.' },
+      { label: '10 hand squeezes', icon: 'hand', type: 'count', target: 10, instruction: 'Squeeze your hands into fists.\nLet go. Count each one.' },
+      { label: 'Push the seat or chair', icon: 'dumbbell', type: 'count', target: 10, instruction: 'Push your back against the seat hard.\nHold 3 seconds. Release.' },
+      { label: '2 minute walk', icon: 'walk', type: 'timer', seconds: 120, instruction: 'Walk to a safe spot and back.' },
+      { label: 'Jumping jacks x15', icon: 'dumbbell', type: 'count', target: 15, instruction: 'Arms up, legs out.\nCount each one.' }
+    ]},
+    frustrated: { title: 'Try one of these', options: [
+      { label: '3 deep breaths', icon: 'wind', type: 'breath', cycles: 3, instruction: 'In through nose.\nOut through mouth.' },
+      { label: 'Squeeze and let go', icon: 'hand', type: 'timer', seconds: 30, instruction: 'Squeeze fists tight.\nHold. Let go. Repeat.' },
+      { label: 'Say: "I need a minute"', icon: 'chat', type: 'script', instruction: 'Find a grown-up.\nSay these words:\n\n"I need a minute."' },
+      { label: 'Count down from 10', icon: 'count', type: 'count', target: 10, instruction: 'Slowly count back.\n10, 9, 8, 7...' },
+      { label: 'Find 3 things you see', icon: 'eye', type: 'timer', seconds: 60, instruction: 'Look around.\nName 3 things you see.' }
+    ]},
+    calm: { title: 'Calm your body', options: [
+      { label: '4 slow breaths', icon: 'wind', type: 'breath', cycles: 4, instruction: 'Hand on belly.\nFeel it go up and down.' },
+      { label: 'Shoulder drops', icon: 'body', type: 'timer', seconds: 20, instruction: 'Lift shoulders up.\nHold. Drop them.' },
+      { label: 'Feet on the floor', icon: 'feet', type: 'timer', seconds: 30, instruction: 'Both feet flat.\nPress them down.' },
+      { label: 'Quiet mouth', icon: 'body', type: 'timer', seconds: 30, instruction: 'Lips closed.\nBreathe through your nose.' },
+      { label: 'Heavy hands', icon: 'hand', type: 'timer', seconds: 30, instruction: 'Make your hands feel heavy.\nLet them sink.' }
+    ]},
+    focus: { title: 'Get back to it', options: [
+      { label: 'Just the next step', icon: 'target', type: 'script', instruction: 'What is the VERY next thing?\n\nDo just that.' },
+      { label: 'Work for 2 minutes', icon: 'clock', type: 'timer', seconds: 120, instruction: 'Start now.\nJust 2 minutes.' },
+      { label: 'Listen for 1 thing', icon: 'ear', type: 'script', instruction: 'Stop.\nLook at the grown-up.\nListen to the next sentence.' },
+      { label: 'Color game', icon: 'eye', type: 'timer', seconds: 60, instruction: 'Find something red.\nThen orange, yellow, green.' },
+      { label: 'Point to step 1', icon: 'target', type: 'script', instruction: 'Find your paper.\nPoint to the first thing.' }
+    ]},
+    adult: { title: 'Tell Mom or Dad', options: [
+      { label: 'Say: "Can I have help?"', icon: 'chat', type: 'script', instruction: 'Go find Mom or Dad.\nSay:\n\n"Can I have help?"' },
+      { label: 'Say: "I\'m having a hard time"', icon: 'chat', type: 'script', instruction: 'Go find Mom or Dad.\nSay:\n\n"I\'m having a hard time."' },
+      { label: 'Say: "I need quiet"', icon: 'chat', type: 'script', instruction: 'Say:\n\n"I need quiet for a minute."' },
+      { label: 'Just find them', icon: 'chat', type: 'script', instruction: 'You don\'t have to talk.\nJust go stand next to Mom or Dad.' }
+    ]}
+  };
+
+  function icon(name) {
+    const icons = {
+      dumbbell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8v8M10 6v12M14 6v12M18 8v8M2 12h2M20 12h2"/></svg>',
+      feet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="8" cy="12" rx="3" ry="5"/><ellipse cx="16" cy="14" rx="3" ry="5"/></svg>',
+      walk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13" cy="4" r="2"/><path d="M10 8l3-2 3 4-2 4M8 20l4-8M14 14l2 6"/></svg>',
+      hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11V5a2 2 0 0 1 4 0v6M11 11V4a2 2 0 0 1 4 0v7M15 11V6a2 2 0 0 1 4 0v9a6 6 0 0 1-6 6h-2a6 6 0 0 1-6-6v-3"/></svg>',
+      wind: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h13a3 3 0 1 0-3-3M3 14h16a3 3 0 1 1-3 3M3 11h7"/></svg>',
+      chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 15a3 3 0 0 1-3 3H8l-4 3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3z"/></svg>',
+      count: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><text x="4" y="17" font-size="14" font-weight="600" fill="currentColor" stroke="none">123</text></svg>',
+      eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+      body: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="M12 7v6M8 10h8M10 13l-1 7M14 13l1 7"/></svg>',
+      target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>',
+      clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+      ear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 3-2 4-2 7a3 3 0 0 1-6 0M9 12a3 3 0 0 1 3-3"/></svg>'
+    };
+    return icons[name] || icons.target;
+  }
+
+  function getLog() {
+    try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch { return []; }
+  }
+  function saveLog(log) {
+    try { localStorage.setItem(LOG_KEY, JSON.stringify(log.slice(0, 500))); } catch {}
+  }
+
+  window.showScreen = function(name) {
+    ['home','choose','active','outcome','pin','parent'].forEach(s => {
+      const el = document.getElementById('screen-' + s);
+      if (el) el.classList.add('hidden');
+    });
+    document.getElementById('screen-' + name).classList.remove('hidden');
+    if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    if (name === 'pin') { pinEntry = ''; renderPin(); }
+    if (name === 'parent') { renderParent(); }
+  };
+
+  window.choose = function(cat) {
+    currentCategory = cat;
+    const data = interventions[cat];
+    document.getElementById('choose-title').textContent = data.title;
+    const container = document.getElementById('choose-options');
+    container.innerHTML = '';
+    data.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = '<span class="opt-icon">' + icon(opt.icon) + '</span><span>' + opt.label + '</span>';
+      btn.onclick = () => start(i);
+      container.appendChild(btn);
+    });
+    showScreen('choose');
+  };
+
+  window.start = function(i) {
+    currentOption = interventions[currentCategory].options[i];
+    document.getElementById('active-title').textContent = currentOption.label;
+    document.getElementById('active-instruction').textContent = currentOption.instruction;
+    const display = document.getElementById('active-display');
+    display.innerHTML = '';
+    activeCount = 0;
+
+    if (currentOption.type === 'timer') {
+      let remaining = currentOption.seconds;
+      display.innerHTML = '<div class="timer" id="timer-display"></div>';
+      const update = () => {
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        document.getElementById('timer-display').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        if (remaining <= 0) { clearInterval(activeTimer); activeTimer = null; document.getElementById('timer-display').textContent = 'Done ✓'; }
+        remaining--;
+      };
+      update();
+      activeTimer = setInterval(update, 1000);
+    } else if (currentOption.type === 'count') {
+      display.innerHTML = '<div class="count" id="count-display">0</div><div class="count-sub">of ' + currentOption.target + '</div><button class="big-tap" onclick="tapCount()">Tap for each one</button>';
+    } else if (currentOption.type === 'breath') {
+      let cycle = 0;
+      let phase = 'in';
+      display.innerHTML = '<div class="timer" id="breath-display">Breathe in...</div>';
+      const update = () => {
+        const el = document.getElementById('breath-display');
+        if (phase === 'in') { el.textContent = 'Breathe in...'; phase = 'out'; }
+        else { el.textContent = 'Breathe out...'; phase = 'in'; cycle++; }
+        if (cycle >= currentOption.cycles && phase === 'in') {
+          el.textContent = 'Done ✓';
+          clearInterval(activeTimer); activeTimer = null;
+        }
+      };
+      update();
+      activeTimer = setInterval(update, 3500);
+    }
+    showScreen('active');
+    setTimeout(speak, 400);
+  };
+
+  window.tapCount = function() {
+    activeCount++;
+    document.getElementById('count-display').textContent = activeCount;
+    if (activeCount >= currentOption.target) {
+      document.getElementById('count-display').textContent = '✓';
+    }
+  };
+
+  window.speak = function() {
+    if (!window.speechSynthesis || !currentOption) return;
+    window.speechSynthesis.cancel();
+    const text = currentOption.label + '. ' + currentOption.instruction.replace(/\n+/g, '. ');
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.9; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  };
+
+  window.finish = function() {
+    showScreen('outcome');
+  };
+
+  window.logOutcome = function(outcome) {
+    const entry = {
+      time: Date.now(),
+      category: currentCategory,
+      option: currentOption ? currentOption.label : '',
+      outcome: outcome
+    };
+    const log = getLog();
+    log.unshift(entry);
+    saveLog(log);
+    showScreen('home');
+  };
+
+  function renderPin() {
+    const pad = document.getElementById('pin-pad');
+    pad.innerHTML = '';
+    [1,2,3,4,5,6,7,8,9].forEach(n => {
+      const k = document.createElement('button');
+      k.className = 'pin-key'; k.textContent = n;
+      k.onclick = () => pinTap(String(n));
+      pad.appendChild(k);
+    });
+    const empty = document.createElement('div'); pad.appendChild(empty);
+    const zero = document.createElement('button');
+    zero.className = 'pin-key'; zero.textContent = '0';
+    zero.onclick = () => pinTap('0');
+    pad.appendChild(zero);
+    const del = document.createElement('button');
+    del.className = 'pin-key'; del.textContent = '←';
+    del.onclick = () => { pinEntry = pinEntry.slice(0,-1); updatePinDots(); };
+    pad.appendChild(del);
+    updatePinDots();
+  }
+  function updatePinDots() {
+    const dots = document.querySelectorAll('#pin-dots .pin-dot');
+    dots.forEach((d, i) => d.classList.toggle('filled', i < pinEntry.length));
+  }
+  window.pinTap = function(n) {
+    if (pinEntry.length >= 4) return;
+    pinEntry += n;
+    updatePinDots();
+    if (pinEntry.length === 4) {
+      setTimeout(() => {
+        if (pinEntry === PIN) showScreen('parent');
+        else { pinEntry = ''; updatePinDots(); }
+      }, 200);
+    }
+  };
+
+  function renderParent() {
+    const log = getLog();
+    const weekAgo = Date.now() - 7*24*60*60*1000;
+    const recent = log.filter(e => e.time > weekAgo);
+    const counts = { move: 0, frustrated: 0, calm: 0, focus: 0, adult: 0 };
+    const outcomes = { yes: 0, some: 0, no: 0 };
+    recent.forEach(e => {
+      if (counts[e.category] !== undefined) counts[e.category]++;
+      if (outcomes[e.outcome] !== undefined) outcomes[e.outcome]++;
+    });
+    const topCat = Object.entries(counts).sort((a,b) => b[1]-a[1])[0];
+    const catLabel = { move: 'Movement', frustrated: 'Frustration', calm: 'Calming', focus: 'Focus', adult: 'Adult help' };
+    const workedPct = recent.length ? Math.round((outcomes.yes + outcomes.some * 0.5) / recent.length * 100) : 0;
+    document.getElementById('parent-stats').innerHTML =
+      '<div class="stat"><div class="stat-label">Total resets</div><div class="stat-value">' + recent.length + '</div></div>' +
+      '<div class="stat"><div class="stat-label">Worked rate</div><div class="stat-value">' + workedPct + '%</div></div>' +
+      '<div class="stat"><div class="stat-label">Top category</div><div class="stat-value" style="font-size:17px;">' + (topCat && topCat[1] > 0 ? catLabel[topCat[0]] : '—') + '</div></div>' +
+      '<div class="stat"><div class="stat-label">"Better" count</div><div class="stat-value">' + outcomes.yes + '</div></div>';
+    const logEl = document.getElementById('parent-log');
+    if (!recent.length) {
+      logEl.innerHTML = '<p style="font-size:14px;color:#6a6a6a;padding:8px 0;">No entries yet.</p>';
+    } else {
+      logEl.innerHTML = recent.slice(0, 15).map(e => {
+        const d = new Date(e.time);
+        const t = d.toLocaleDateString([], {month:'short', day:'numeric'}) + ' ' + d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+        const outLabel = { yes: '✓ better', some: '~ a little', no: '✗ stuck' }[e.outcome] || '';
+        return '<div class="log-row"><div><div style="font-weight:500;">' + (e.option || catLabel[e.category]) + '</div><div class="log-time">' + t + '</div></div><div style="font-size:13px;color:#6a6a6a;align-self:center;">' + outLabel + '</div></div>';
+      }).join('');
+    }
+  }
+
+  window.exportLog = function() {
+    const text = JSON.stringify(getLog(), null, 2);
+    if (navigator.share) {
+      navigator.share({ title: 'Reset Coach log', text: text }).catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  };
+  function fallbackCopy(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => alert('Log copied. Paste it in a chat with Claude.')).catch(() => prompt('Copy this log:', text));
+    } else {
+      prompt('Copy this log:', text);
+    }
+  }
+
+  window.clearLog = function() {
+    if (!confirm('Clear all logs? This cannot be undone.')) return;
+    try { localStorage.removeItem(LOG_KEY); } catch {}
+    renderParent();
+  };
+})();
+</script>
+</body>
+</html>
